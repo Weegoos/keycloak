@@ -1,23 +1,17 @@
+<!-- src/pages/Index.vue -->
+
 <template>
   <div>
-    <h1>Welcome, {{ userName }}</h1>
-    <button @click="logout">Logout</button>
+    <h1>Welcome to BATYR WEB APP</h1>
+    <button @click="login">Login with Keycloak</button>
   </div>
 </template>
 
-<script>
-export default {
-  computed: {
-    userName() {
-      return this.$keycloak.tokenParsed
-        ? this.$keycloak.tokenParsed.preferred_username
-        : "";
-    },
-  },
-  methods: {
-    logout() {
-      this.$keycloak.logout();
-    },
-  },
+<script setup>
+import keycloak from "../keycloak"; // Adjust the path if necessary
+
+const login = () => {
+  // keycloak.login();
+  alert("Batyr");
 };
 </script>

@@ -8,17 +8,14 @@ export default boot(({ app, router }) => {
       if (!authenticated) {
         window.location.reload();
       } else {
-        // Установите глобальный доступ к Keycloak
         app.config.globalProperties.$keycloak = keycloak;
 
-        // Обработчик истечения токена
         keycloak.onTokenExpired = () => {
           keycloak.updateToken(30).catch(() => {
             keycloak.logout();
           });
         };
 
-        // Защита маршрутов
         router.beforeEach((to, from, next) => {
           if (to.meta.requiresAuth && !keycloak.authenticated) {
             keycloak.login();

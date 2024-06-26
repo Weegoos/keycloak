@@ -13,14 +13,16 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@keycloak/keycloak-admin-client": "^25.0.1",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "keycloak-admin": "^1.14.22",
     "keycloak-js": "^25.0.1",
     "pinia": "^2.0.11",
     "quasar": "^2.8.0",
     "vue": "^3.4.18",
     "vue-i18n": "^9.0.0",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
