@@ -1,35 +1,34 @@
-// src/boot/keycloak.js
 import { boot } from "quasar/wrappers";
-import keycloak from "../keycloak";
+import keycloak from "src/keycloak";
 
 export default boot(({ app, router }) => {
-  return new Promise((resolve, reject) => {
-    keycloak
-      .init({ onLoad: "login-required", checkLoginIframe: false })
-      .then((authenticated) => {
-        if (authenticated) {
-          app.config.globalProperties.$keycloak = keycloak;
+  keycloak
+    .init({ onLoad: "login-required" })
+    .then((authenticated) => {
+      if (!authenticated) {
+        window.location.reload();
+      } else {
+        // Установите глобальный доступ к Keycloak
+        app.config.globalProperties.$keycloak = keycloak;
 
-          router.beforeEach(async (to, from, next) => {
-            if (to.matched.some((record) => record.meta.requiresAuth)) {
-              if (!keycloak.authenticated) {
-                keycloak.login();
-              } else {
-                next();
-              }
-            } else {
-              next();
-            }
+        // Обработчик истечения токена
+        keycloak.onTokenExpired = () => {
+          keycloak.updateToken(30).catch(() => {
+            keycloak.logout();
           });
+        };
 
-          resolve();
-        } else {
-          window.location.reload();
-        }
-      })
-      .catch((error) => {
-        console.error("Ошибка инициализации Keycloak:", error);
-        reject(error);
-      });
-  });
+        // Защита маршрутов
+        router.beforeEach((to, from, next) => {
+          if (to.meta.requiresAuth && !keycloak.authenticated) {
+            keycloak.login();
+          } else {
+            next();
+          }
+        });
+      }
+    })
+    .catch(() => {
+      console.error("Authenticated Failed");
+    });
 });

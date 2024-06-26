@@ -1,27 +1,23 @@
 <template>
-  <q-page>
-    <div v-if="$keycloak.authenticated">
-      <p>Welcome, {{ $keycloak.tokenParsed.preferred_username }}</p>
-      <q-btn @click="logout" label="Logout" />
-    </div>
-    <div v-else>
-      <p>You are not authenticated. Redirecting...</p>
-    </div>
-  </q-page>
+  <div>
+    <h1>Welcome, {{ userName }}</h1>
+    <button @click="logout">Logout</button>
+  </div>
 </template>
 
-<script setup>
-import { useQuasar } from "quasar";
-import { useRouter } from "vue-router";
-
-const logout = () => {
-  $keycloak.logout();
+<script>
+export default {
+  computed: {
+    userName() {
+      return this.$keycloak.tokenParsed
+        ? this.$keycloak.tokenParsed.preferred_username
+        : "";
+    },
+  },
+  methods: {
+    logout() {
+      this.$keycloak.logout();
+    },
+  },
 };
-
-const router = useRouter();
-if (!$keycloak.authenticated) {
-  router.push("/login");
-}
 </script>
-
-<style></style>
